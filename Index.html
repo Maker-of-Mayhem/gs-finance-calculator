@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generator Solutions Financing Calculator</title>
+  <style>
+    :root {
+      --bg: #020921;
+      --panel: #0b1638;
+      --panel-2: #101f4d;
+      --text: #f5f7ff;
+      --muted: #b6c2e3;
+      --accent: #f58a1f;
+      --blue: #245bb4;
+      --line: rgba(255,255,255,0.12);
+      --success: #19b36b;
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(36,91,180,0.18), transparent 22%),
+        linear-gradient(180deg, #041030 0%, var(--bg) 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 72px;
+    }
+
+    .hero {
+      max-width: 780px;
+      margin-bottom: 28px;
+    }
+
+    .logo-wrap {
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      height: 52px;
+      width: auto;
+      display: block;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.05;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.65;
+      max-width: 760px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .controls {
+      padding: 28px;
+    }
+
+    .results {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .section-title {
+      margin: 0 0 20px;
+      font-size: 1.2rem;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 18px;
+    }
+
+    .field,
+    .full {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    label {
+      font-weight: 700;
+      font-size: 0.98rem;
+    }
+
+    .helper {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    input,
+    select {
+      cursor: pointer;
+    }
+
+    input[readonly] {
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    input[readonly]:focus {
+      box-shadow: none;
+      border-color: rgba(255,255,255,0.14);
+    }
+
+    select {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 15px 16px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: rgba(245, 138, 31, 0.65);
+      box-shadow: 0 0 0 4px rgba(245, 138, 31, 0.12);
+    }
+
+    .preset-row,
+    .term-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .chip:hover,
+    .chip.active {
+      transform: translateY(-1px);
+      border-color: rgba(245, 138, 31, 0.55);
+      background: rgba(245, 138, 31, 0.14);
+    }
+
+    .promo-box {
+      border: 1px solid rgba(25,179,107,0.35);
+      background: linear-gradient(180deg, rgba(25,179,107,0.10), rgba(25,179,107,0.04));
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .promo-tag {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: rgba(25,179,107,0.14);
+      color: #c8ffe5;
+      margin-bottom: 12px;
+    }
+
+    .promo-title {
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+    }
+
+    .promo-copy {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .results-top {
+      padding: 26px 26px 22px;
+      background: linear-gradient(180deg, rgba(25,179,107,0.14), rgba(25,179,107,0.04));
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .results-top h2 {
+      margin: 0 0 8px;
+      font-size: 1.45rem;
+    }
+
+    .results-top p {
+      margin: 0;
+      color: #d7e0ff;
+      line-height: 1.55;
+    }
+
+    .payments {
+      padding: 22px 22px 10px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .pay-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .pay-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    .pay-amount {
+      font-size: clamp(1.4rem, 2.6vw, 2rem);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .pay-sub {
+      color: var(--muted);
+      font-size: 0.93rem;
+      line-height: 1.45;
+    }
+
+    .details {
+      padding: 8px 26px 6px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .detail-row:last-child {
+      border-bottom: 0;
+    }
+
+    .detail-label {
+      color: var(--muted);
+    }
+
+    .detail-value {
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .confidence {
+      margin: 12px 26px 0;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(36,91,180,0.14);
+      border: 1px solid rgba(36,91,180,0.24);
+      color: #dbe7ff;
+      line-height: 1.55;
+    }
+
+    .results-bottom {
+      padding: 22px 26px 28px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 14px 0 0;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 15px 22px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #f7a94d, var(--accent));
+      color: #081128;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .qr-card {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .qr-image {
+      width: 92px;
+      height: 92px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 6px;
+      flex: 0 0 auto;
+    }
+
+    .qr-copy {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .qr-copy strong {
+      color: var(--text);
+    }
+
+    .disclaimer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      max-width: 860px;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .payments {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .qr-card {
+        align-items: flex-start;
+      }
+
+      .qr-image {
+        width: 78px;
+        height: 78px;
+      }
+
+      .wrap {
+        width: min(100% - 20px, 1180px);
+        padding: 28px 0 54px;
+      }
+      .controls,
+      .results-top,
+      .details,
+      .results-bottom {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+      .field-grid {
+        grid-template-columns: 1fr;
+      }
+      .confidence {
+        margin-left: 18px;
+        margin-right: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="logo-wrap">
+        <img src="assets/gs-logo.png" alt="Generator Solutions Logo" class="logo" />
+      </div>
+      <h1>Estimate Your Financing Options</h1>
+      <p>
+        Explore weekly, biweekly, and monthly payment estimates for your generator project.
+        This tool is designed to give you a fast, helpful estimate so you can compare payment options with confidence.
+      </p>
+    </section>
+
+    <section class="grid">
+      <div class="card controls">
+        <h2 class="section-title">Project Details</h2>
+        <div class="field-grid">
+          <div class="full">
+            <label for="purchaseAmount">Project amount</label>
+            <input id="purchaseAmount" type="number" min="0" step="100" value="17500" />
+            <div class="helper">Use the quick picks below or enter your own amount.</div>
+            <div class="preset-row">
+              <button class="chip" data-amount="15000">$15,000</button>
+              <button class="chip active" data-amount="17500">$17,500</button>
+              <button class="chip" data-amount="20000">$20,000</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="downPayment">Down payment</label>
+            <input id="downPayment" type="number" min="0" step="100" value="0" />
+            <div class="helper">Optional.</div>
+          </div>
+
+          <div class="field">
+            <label for="termMonths">Amortization period</label>
+            <select id="termMonths">
+              <option value="60">60 months</option>
+              <option value="72">72 months</option>
+              <option value="84">84 months</option>
+              <option value="96">96 months</option>
+              <option value="108">108 months</option>
+              <option value="120" selected>120 months</option>
+              <option value="132">132 months</option>
+              <option value="144">144 months</option>
+              <option value="156">156 months</option>
+              <option value="168">168 months</option>
+              <option value="180">180 months</option>
+              <option value="240">240 months</option>
+            </select>
+          </div>
+
+          <div class="full">
+            <div class="helper">Most customers exploring financing start by looking at 120–180 month terms.</div>
+          </div>
+
+          <div class="full">
+            <div class="promo-box">
+              <div class="promo-tag">Special Promo</div>
+              <h3 class="promo-title">3 Months at 0% APR</h3>
+              <p class="promo-copy">
+                Enjoy a promotional first 3 months at 0% APR, followed by a conservative estimated rate for the remaining repayment period.
+              </p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="standardApr">Estimated rate after promo</label>
+            <input id="standardApr" type="number" value="13.99" readonly />
+            <div class="helper">Set slightly conservatively for estimate purposes.</div>
+          </div>
+
+          <div class="field">
+            <label for="adminFee">Administration fee</label>
+            <input id="adminFee" type="number" value="149" readonly />
+            <div class="helper">Included in the estimated financed amount.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card results">
+        <div class="results-top">
+          <h2>Your Estimated Payments</h2>
+          <p>
+            See all three payment frequencies at once so you can quickly compare what feels most comfortable for your budget.
+          </p>
+        </div>
+
+        <div class="payments">
+          <div class="pay-card">
+            <div class="pay-label">Weekly</div>
+            <div class="pay-amount" id="weeklyAmount">$0.00</div>
+            <div class="pay-sub" id="weeklySub">Promo estimate shown first, then standard payment.</div>
+          </div>
+          <div class="pay-card">
+            <div class="pay-label">Biweekly</div>
+            <div class="pay-amount" id="biweeklyAmount">$0.00</div>
+            <div class="pay-sub" id="biweeklySub">Promo estimate shown first, then standard payment.</div>
+          </div>
+          <div class="pay-card">
+            <div class="pay-label">Monthly</div>
+            <div class="pay-amount" id="monthlyAmount">$0.00</div>
+            <div class="pay-sub" id="monthlySub">Promo estimate shown first, then standard payment.</div>
+          </div>
+        </div>
+
+        <div class="details">
+          <div class="detail-row">
+            <div class="detail-label">Amount financed</div>
+            <div class="detail-value" id="financedAmount">$0.00</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Selected amortization</div>
+            <div class="detail-value" id="selectedTerm">120 months</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Promo period</div>
+            <div class="detail-value">3 months at 0% APR</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Estimated APR after promo</div>
+            <div class="detail-value" id="aprValue">13.99%</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Administration fee</div>
+            <div class="detail-value" id="adminFeeValue">$149.00</div>
+          </div>
+        </div>
+
+        <div class="confidence">
+          <strong>Power doesn’t have to be paid for all at once.</strong><br>
+          Flexible financing can help turn a larger project into manageable payments that feel more realistic and easier to plan for.
+          Many customers may qualify for equal or better terms based on credit profile.
+        </div>
+
+        <div class="results-bottom">
+          <div class="buttons">
+            <a class="btn btn-primary" href="https://www.financeit.ca/s/gTRtWQ" id="preApproveBtn" target="_blank" rel="noopener noreferrer">Get Pre-Approved</a>
+            <a class="btn btn-secondary" href="https://generatorsolutions.ca/wp2/new-hsb-site-meet-request/" id="quoteBtn" target="_blank" rel="noopener noreferrer">Request a Quote</a>
+          </div>
+          <div class="helper" style="margin-top:10px;">
+            Quick, secure, and no obligation.
+          </div>
+          <div class="qr-card">
+            <img src="assets/get-pre-approved-qr.png" alt="QR code to get pre-approved" class="qr-image" />
+            <div class="qr-copy">
+              <strong>Prefer your phone?</strong><br>
+              Scan to open the pre-approval page directly.
+            </div>
+          </div>
+          <div class="disclaimer">
+            Estimated payments are provided for illustration purposes only. Final approval, rate, term, payment amount,
+            and applicable program details are subject to credit approval and lender terms.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      This calculator is intended to help you compare payment options before applying. It is designed to stay slightly conservative so your final approved terms may be equal to or better than the estimate shown here.
+    </p>
+  </div>
+
+  <script>
+    const amountInput = document.getElementById('purchaseAmount');
+    const downInput = document.getElementById('downPayment');
+    const termInput = document.getElementById('termMonths');
+    const aprInput = document.getElementById('standardApr');
+    const adminFeeInput = document.getElementById('adminFee');
+    const chips = document.querySelectorAll('.chip');
+
+    const currency = new Intl.NumberFormat('en-CA', {
+      style: 'currency',
+      currency: 'CAD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    function formatCurrency(value) {
+      return currency.format(isFinite(value) ? value : 0);
+    }
+
+    function paymentForFrequency(principal, annualRate, totalMonths, periodsPerYear) {
+      const totalPeriods = (totalMonths / 12) * periodsPerYear;
+      const ratePerPeriod = annualRate / 100 / periodsPerYear;
+
+      if (totalPeriods <= 0) return 0;
+      if (ratePerPeriod === 0) return principal / totalPeriods;
+
+      return principal * (ratePerPeriod * Math.pow(1 + ratePerPeriod, totalPeriods)) /
+        (Math.pow(1 + ratePerPeriod, totalPeriods) - 1);
+    }
+
+    function promoPaymentForFrequency(principal, promoMonths, totalMonths, periodsPerYear) {
+      // Simpler estimate for the promo period: spread principal over the remaining amortization after the 3-month promo window.
+      // This produces a much closer customer-facing estimate to the Financeit example than the interest-subtraction approach.
+      const remainingPeriods = Math.max(((totalMonths - promoMonths) / 12) * periodsPerYear, 1);
+      return principal / remainingPeriods;
+    }
+
+    function updateCalculator() {
+      const purchaseAmount = Math.max(parseFloat(amountInput.value) || 0, 0);
+      const downPayment = Math.max(parseFloat(downInput.value) || 0, 0);
+      const termMonths = parseInt(termInput.value, 10) || 120;
+      const standardApr = Math.max(parseFloat(aprInput.value) || 0, 0);
+      const adminFee = Math.max(parseFloat(adminFeeInput.value) || 0, 0);
+      const promoMonths = 3;
+      const financed = Math.max((purchaseAmount - downPayment) + adminFee, 0);
+
+      const weeklyStandard = paymentForFrequency(financed, standardApr, termMonths, 52);
+      const biweeklyStandard = paymentForFrequency(financed, standardApr, termMonths, 26);
+      const monthlyStandard = paymentForFrequency(financed, standardApr, termMonths, 12);
+
+      const weeklyPromo = promoPaymentForFrequency(financed, promoMonths, termMonths, 52);
+      const biweeklyPromo = promoPaymentForFrequency(financed, promoMonths, termMonths, 26);
+      const monthlyPromo = promoPaymentForFrequency(financed, promoMonths, termMonths, 12);
+
+      document.getElementById('weeklyAmount').textContent = formatCurrency(weeklyStandard);
+      document.getElementById('biweeklyAmount').textContent = formatCurrency(biweeklyStandard);
+      document.getElementById('monthlyAmount').textContent = formatCurrency(monthlyStandard);
+
+      document.getElementById('weeklySub').textContent = `${formatCurrency(weeklyPromo)} for the first 3 months at 0%, then ${formatCurrency(weeklyStandard)} estimated weekly.`;
+      document.getElementById('biweeklySub').textContent = `${formatCurrency(biweeklyPromo)} for the first 3 months at 0%, then ${formatCurrency(biweeklyStandard)} estimated biweekly.`;
+      document.getElementById('monthlySub').textContent = `${formatCurrency(monthlyPromo)} for the first 3 months at 0%, then ${formatCurrency(monthlyStandard)} estimated monthly.`;
+
+      document.getElementById('financedAmount').textContent = formatCurrency(financed);
+      document.getElementById('selectedTerm').textContent = `${termMonths} months`;
+      document.getElementById('aprValue').textContent = `${standardApr.toFixed(2)}%`;
+      document.getElementById('adminFeeValue').textContent = formatCurrency(adminFee);
+
+      chips.forEach(chip => {
+        chip.classList.toggle('active', Number(chip.dataset.amount) === purchaseAmount);
+      });
+    }
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        amountInput.value = chip.dataset.amount;
+        updateCalculator();
+      });
+    });
+
+    [amountInput, downInput, termInput].forEach(input => {
+      input.addEventListener('input', updateCalculator);
+      input.addEventListener('change', updateCalculator);
+    });
+
+    updateCalculator();
+  </script>
+</body>
+</html>
