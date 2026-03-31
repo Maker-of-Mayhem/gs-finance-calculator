@@ -32,38 +32,41 @@
     }
 
     .wrap {
-      width: min(1180px, calc(100% - 32px));
+      width: min(1320px, calc(100% - 32px));
       margin: 0 auto;
       padding: 48px 0 72px;
     }
 
     .hero {
-      max-width: 780px;
+      max-width: 100%;
       margin-bottom: 28px;
+      text-align: center;
     }
 
     .logo-wrap {
       margin-bottom: 18px;
+      display: flex;
+      justify-content: center;
     }
 
     .logo {
-      height: 52px;
-      width: auto;
+      width: min(500px, 92vw);
+      height: auto;
       display: block;
     }
 
     h1 {
       margin: 0 0 14px;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      line-height: 1.05;
+      font-size: clamp(2rem, 3vw, 2.6rem);
+      line-height: 1.1;
     }
 
     .hero p {
-      margin: 0;
+      margin: 0 auto;
       color: var(--muted);
       font-size: 1.08rem;
       line-height: 1.65;
-      max-width: 760px;
+      max-width: 820px;
     }
 
     .grid {
@@ -229,7 +232,7 @@
     .payments {
       padding: 22px 22px 10px;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }
 
@@ -238,6 +241,7 @@
       border: 1px solid rgba(255,255,255,0.10);
       border-radius: 18px;
       padding: 18px;
+      min-width: 0;
     }
 
     .pay-label {
@@ -250,9 +254,11 @@
     }
 
     .pay-amount {
-      font-size: clamp(1.4rem, 2.6vw, 2rem);
+      font-size: clamp(1.3rem, 2.1vw, 1.9rem);
       font-weight: 800;
       margin-bottom: 8px;
+      line-height: 1.1;
+      overflow-wrap: anywhere;
     }
 
     .pay-sub {
@@ -391,6 +397,10 @@
     }
 
     @media (max-width: 700px) {
+      .logo {
+        width: min(360px, 88vw);
+      }
+
       .qr-card {
         align-items: flex-start;
       }
@@ -565,7 +575,7 @@
             Quick, secure, and no obligation.
           </div>
           <div class="qr-card">
-            <img src="assets/get-pre-approved-qr.png" alt="QR code to get pre-approved" class="qr-image" />
+            <img src="assets/Get%20Pre-Approved.png" alt="QR code to get pre-approved" class="qr-image" />
             <div class="qr-copy">
               <strong>Prefer your phone?</strong><br>
               Scan to open the pre-approval page directly.
